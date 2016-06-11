@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchWinForms", "Twitch\TwitchWinForms.csproj", "{2E109144-87E7-4A32-9C40-60AD3140468A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchLibrary", "TwitchLibrary\TwitchLibrary.csproj", "{146F1C90-6787-40C5-8B6E-85758287209B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{451BA506-60FD-4180-A48D-D6F76805FDA1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2E109144-87E7-4A32-9C40-60AD3140468A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E109144-87E7-4A32-9C40-60AD3140468A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E109144-87E7-4A32-9C40-60AD3140468A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E109144-87E7-4A32-9C40-60AD3140468A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{146F1C90-6787-40C5-8B6E-85758287209B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{146F1C90-6787-40C5-8B6E-85758287209B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{146F1C90-6787-40C5-8B6E-85758287209B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{146F1C90-6787-40C5-8B6E-85758287209B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
