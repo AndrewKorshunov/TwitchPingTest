@@ -8,7 +8,7 @@ namespace TwitchLibrary
 {
     public class TwitchServersPinger
     {
-        // Twitch server ignores ICMP protocol of regular ping
+        // Twitch server ignores ICMP packets of regular ping
         private const int rtmpPort = 1935;
 
         public event EventHandler<TwitchPingCompletedEventArgs> PingCompleted;
