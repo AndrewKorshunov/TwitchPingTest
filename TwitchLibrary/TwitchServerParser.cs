@@ -15,7 +15,7 @@ namespace TwitchLibrary
         static public async Task<IEnumerable<TwitchServer>> GetAllTwitchServers()
         {
             var serverList = new List<TwitchServer>();
-            var json = await GetJsonAnswer().ConfigureAwait(false);
+            var json = await GetJsonString().ConfigureAwait(false);
             dynamic jsonServersObject = JsonConvert.DeserializeObject(json);
             foreach (var server in jsonServersObject.ingests)
             {
@@ -33,14 +33,14 @@ namespace TwitchLibrary
         static private string GetHostnameFromUrl(string urlTemplate)
         {
             // example "rtmp://live-mia.twitch.tv/app/{stream_key}"
-            var result = urlTemplate
+            var hostname = urlTemplate
                 .SkipWhile(x => x != '/')  // skip protocol
                 .Skip(2)  // 
                 .TakeWhile(x => x != '/');  // take only host address
-            return new string(result.ToArray());
+            return new string(hostname.ToArray());
         }
 
-        static private async Task<string> GetJsonAnswer()
+        static private async Task<string> GetJsonString()
         {
             var request = WebRequest.Create(apiUrl);
             var response = await request.GetResponseAsync().ConfigureAwait(false);
