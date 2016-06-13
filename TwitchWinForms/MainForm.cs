@@ -15,13 +15,13 @@ namespace Twitch
 {
     public partial class MainForm : Form
     {
-        private readonly Dictionary<string, TwitchServerPingControl> serverToControl;
+        private readonly Dictionary<string, TwitchServerPingControl> serverNameToControl;
         private readonly List<TwitchServer> servers;
 
         public MainForm()
         {
             InitializeComponent();
-            serverToControl = new Dictionary<string, TwitchServerPingControl>();
+            serverNameToControl = new Dictionary<string, TwitchServerPingControl>();
             servers = new List<TwitchServer>();
 
             this.Shown += async (sender, args) =>
@@ -39,9 +39,9 @@ namespace Twitch
             var pinger = new TwitchServersPinger();
             foreach (var server in servers)
             {
-                serverToControl[server.Name].Pinging = true;
-                serverToControl[server.Name].ServerPing = await Task.Run(() => { return pinger.Ping(server).Milliseconds; });
-                serverToControl[server.Name].Pinging = false;
+                serverNameToControl[server.Name].Pinging = true;
+                serverNameToControl[server.Name].ServerPing = await Task.Run(() => { return pinger.Ping(server).Milliseconds; });
+                serverNameToControl[server.Name].Pinging = false;
             }
         }
 
@@ -51,7 +51,7 @@ namespace Twitch
             var pingTasks = new List<Task<TwitchPingCompletedEventArgs>>();
             foreach (var server in servers)
             {
-                serverToControl[server.Name].Pinging = true;
+                serverNameToControl[server.Name].Pinging = true;
                 var pingTask = Task.Run<TwitchPingCompletedEventArgs>(() => pinger.PingAsyncTaskArgs(server));
                 pingTasks.Add(pingTask);
             }
@@ -62,8 +62,8 @@ namespace Twitch
                 pingTasks.Remove(firstFinishedTask);
 
                 var pingResult = await firstFinishedTask;
-                serverToControl[pingResult.Server.Name].ServerPing = pingResult.Ping.Milliseconds;
-                serverToControl[pingResult.Server.Name].Pinging = false;
+                serverNameToControl[pingResult.Server.Name].ServerPing = pingResult.Ping.Milliseconds;
+                serverNameToControl[pingResult.Server.Name].Pinging = false;
             }
         }
 
@@ -72,13 +72,13 @@ namespace Twitch
             var pinger = new TwitchServersPinger();
             pinger.PingCompleted += (sender, args) =>
             {
-                var control = serverToControl[args.Server.Name];
+                var control = serverNameToControl[args.Server.Name];
                 control.ServerPing = args.Ping.Milliseconds;
                 control.Pinging = false;
             };
             foreach (var server in servers)
             {                
-                serverToControl[server.Name].Pinging = true;
+                serverNameToControl[server.Name].Pinging = true;
                 //MessageBox.Show(System.Threading.Thread.CurrentThread.GetHashCode().ToString() + " Started"); 
                 var task = new Task(() => pinger.PingAsyncVoid(server));
                 task.Start(TaskScheduler.FromCurrentSynchronizationContext());
@@ -96,8 +96,10 @@ namespace Twitch
                 control.ServerName = server.Name;
                 control.ServerPing = 9999;
                 //tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, control.Height));
+                this.ResizeBegin += (sender, args) => { };
+                this.SizeChanged += (sender, args) => { };
                 tableLayoutPanel.Controls.Add(control);
-                serverToControl.Add(server.Name, control);
+                serverNameToControl.Add(server.Name, control);
 
                 // Trying to solve problem with strange form width behaviour
                 var t1 = this.Width;
@@ -106,14 +108,14 @@ namespace Twitch
                 var t4 = control.Width;
                 var t5 = tableLayoutPanel.RowStyles[0].Height;
             }
-            tableLayoutPanel.ColumnStyles[0].SizeType = SizeType.Absolute;
-            tableLayoutPanel.ColumnStyles[0].Width = 400;
+            //tableLayoutPanel.ColumnStyles[0].SizeType = SizeType.Absolute;
+            //tableLayoutPanel.ColumnStyles[0].Width = 10;
             tableLayoutPanel.ResumeLayout();
         }
 
         private async Task LoadServers()
         {
-            var serverList = await TwitchServerParser.GetAllTwitchServers();
+            var serverList = await TwitchServerParser.GetAllTwitchServers().ConfigureAwait(false);
             //servers.AddRange(serverList.Where(x => x.Name.StartsWith("EU")));
             servers.AddRange(serverList);
             servers.Sort((x, y) => string.Compare(x.Name, y.Name));            

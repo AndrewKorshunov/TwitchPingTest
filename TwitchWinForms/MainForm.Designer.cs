@@ -46,7 +46,7 @@
             this.tableLayoutPanel.Name = "tableLayoutPanel";
             this.tableLayoutPanel.RowCount = 1;
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel.Size = new System.Drawing.Size(3, 32);
+            this.tableLayoutPanel.Size = new System.Drawing.Size(3, 0);
             this.tableLayoutPanel.TabIndex = 0;
             // 
             // buttonStart
@@ -80,7 +80,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(261, 78);
+            this.AutoSize = true;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ClientSize = new System.Drawing.Size(261, 43);
             this.Controls.Add(this.buttonStartParallelAwait);
             this.Controls.Add(this.buttonStartParallelEvents);
             this.Controls.Add(this.buttonStart);

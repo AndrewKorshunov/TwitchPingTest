@@ -12,19 +12,18 @@ namespace TwitchLibrary
         private const int rtmpPort = 1935;
 
         public event EventHandler<TwitchPingCompletedEventArgs> PingCompleted;
-                
-        public async void PingAsyncVoid(TwitchServer server)
+
+        public TimeSpan Ping(TwitchServer server)
         {
             var tcpClient = new TcpClient();
             var stopWatch = new Stopwatch();
-
             stopWatch.Start();
-            await tcpClient.ConnectAsync(server.Url, rtmpPort);
-            stopWatch.Stop();
 
-            OnPingCompleted(new TwitchPingCompletedEventArgs(server, stopWatch.Elapsed));
+            tcpClient.Connect(server.Url, rtmpPort);
+            stopWatch.Stop();
             tcpClient.GetStream().Close();
             tcpClient.Close();
+            return stopWatch.Elapsed;
         }
 
         public async Task<TimeSpan> PingAsyncTask(TwitchServer server)
@@ -55,20 +54,21 @@ namespace TwitchLibrary
 
             return new TwitchPingCompletedEventArgs(server, stopWatch.Elapsed);
         }
-        
-        public TimeSpan Ping(TwitchServer server)
+
+        public async void PingAsyncVoid(TwitchServer server)
         {
             var tcpClient = new TcpClient();
-            var stopWatch = new Stopwatch();            
-            stopWatch.Start();
+            var stopWatch = new Stopwatch();
 
-            tcpClient.Connect(server.Url, rtmpPort);
+            stopWatch.Start();
+            await tcpClient.ConnectAsync(server.Url, rtmpPort);
             stopWatch.Stop();
+
+            OnPingCompleted(new TwitchPingCompletedEventArgs(server, stopWatch.Elapsed));
             tcpClient.GetStream().Close();
             tcpClient.Close();
-            return stopWatch.Elapsed;
         }
-
+        
         private void OnPingCompleted(TwitchPingCompletedEventArgs e)
         {
             var tempHandler = PingCompleted;
