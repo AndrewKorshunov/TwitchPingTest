@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace TwitchLibrary
 {
@@ -11,10 +12,10 @@ namespace TwitchLibrary
     {
         private const string apiUrl = @"https://api.twitch.tv/kraken/ingests";
 
-        static public IEnumerable<TwitchServer> GetAllTwitchServers()
+        static public async Task<IEnumerable<TwitchServer>> GetAllTwitchServers()
         {
             var serverList = new List<TwitchServer>();
-            var json = GetJsonAnswer();
+            var json = await GetJsonAnswer().ConfigureAwait(false);
             dynamic jsonServersObject = JsonConvert.DeserializeObject(json);
             foreach (var server in jsonServersObject.ingests)
             {
@@ -39,10 +40,10 @@ namespace TwitchLibrary
             return new string(result.ToArray());
         }
 
-        static private string GetJsonAnswer()
+        static private async Task<string> GetJsonAnswer()
         {
             var request = WebRequest.Create(apiUrl);
-            var response = request.GetResponse();
+            var response = await request.GetResponseAsync().ConfigureAwait(false);
             string answer = new StreamReader(response.GetResponseStream()).ReadToEnd();
 
             return answer;
