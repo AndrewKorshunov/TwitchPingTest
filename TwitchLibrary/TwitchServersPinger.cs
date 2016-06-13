@@ -6,6 +6,18 @@ using System.Threading.Tasks;
 
 namespace TwitchLibrary
 {
+    public class TwitchPingResult
+    {
+        public TwitchPingResult(TwitchServer server, TimeSpan ping)
+        {
+            this.Ping = ping;
+            this.Server=server;
+        }
+
+        public TwitchServer Server { get; private set; }
+        public TimeSpan Ping { get; private set; }
+    }
+
     public class TwitchServersPinger
     {
         // Twitch server ignores ICMP packets of regular ping
@@ -41,7 +53,7 @@ namespace TwitchLibrary
             return stopWatch.Elapsed;
         }
 
-        public async Task<TwitchPingCompletedEventArgs> PingAsyncTaskArgs(TwitchServer server)
+        public async Task<TwitchPingResult> PingAsyncTaskArgs(TwitchServer server)
         {
             var tcpClient = new TcpClient();
             var stopWatch = new Stopwatch();
@@ -52,7 +64,7 @@ namespace TwitchLibrary
             tcpClient.GetStream().Close();
             tcpClient.Close();
 
-            return new TwitchPingCompletedEventArgs(server, stopWatch.Elapsed);
+            return new TwitchPingResult(server, stopWatch.Elapsed);
         }
 
         public async void PingAsyncVoid(TwitchServer server)

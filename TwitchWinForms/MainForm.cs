@@ -48,11 +48,11 @@ namespace Twitch
         private async void PingParallelAwait()
         {
             var pinger = new TwitchServersPinger();
-            var pingTasks = new List<Task<TwitchPingCompletedEventArgs>>();
+            var pingTasks = new List<Task<TwitchPingResult>>();
             foreach (var server in servers)
             {
                 serverNameToControl[server.Name].Pinging = true;
-                var pingTask = Task.Run<TwitchPingCompletedEventArgs>(() => pinger.PingAsyncTaskArgs(server));
+                var pingTask = Task.Run<TwitchPingResult>(() => pinger.PingAsyncTaskArgs(server));
                 pingTasks.Add(pingTask);
             }
 
