@@ -33,37 +33,23 @@ namespace TwitchLibrary
 
             tcpClient.Connect(server.Url, rtmpPort);
             stopWatch.Stop();
+
             tcpClient.GetStream().Close();
             tcpClient.Close();
             return stopWatch.Elapsed;
         }
-
-        public async Task<TimeSpan> PingAsyncTask(TwitchServer server)
-        {
-            var tcpClient = new TcpClient();
-            var stopWatch = new Stopwatch();
-
-            stopWatch.Start();
-            await tcpClient.ConnectAsync(server.Url, rtmpPort).ConfigureAwait(false);
-            stopWatch.Stop();
-
-            tcpClient.GetStream().Close();
-            tcpClient.Close();
-
-            return stopWatch.Elapsed;
-        }
-
+        
         public async Task<TwitchPingResult> PingAsyncTaskArgs(TwitchServer server)
         {
             var tcpClient = new TcpClient();
             var stopWatch = new Stopwatch();
             stopWatch.Start();
-
+            
             await tcpClient.ConnectAsync(server.Url, rtmpPort).ConfigureAwait(false);
             stopWatch.Stop();
+
             tcpClient.GetStream().Close();
             tcpClient.Close();
-
             return new TwitchPingResult(server, stopWatch.Elapsed);
         }
 
@@ -71,8 +57,8 @@ namespace TwitchLibrary
         {
             var tcpClient = new TcpClient();
             var stopWatch = new Stopwatch();
-
             stopWatch.Start();
+
             await tcpClient.ConnectAsync(server.Url, rtmpPort);
             stopWatch.Stop();
 

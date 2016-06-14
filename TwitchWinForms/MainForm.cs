@@ -63,7 +63,6 @@ namespace Twitch
             {
                 serverNameToControl[server.Name].Pinging = true;
                 serverNameToControl[server.Name].ServerPing = await Task.Run(() => { return pinger.Ping(server).Milliseconds; });
-                //serverNameToControl[server.Name].ServerPing = (await pinger.PingAsyncTask(server)).Milliseconds; // same?
                 serverNameToControl[server.Name].Pinging = false;
             }
         }
