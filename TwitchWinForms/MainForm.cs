@@ -34,6 +34,28 @@ namespace Twitch
             buttonStartParallelAwait.Click += (sender, args) => PingParallelAwait();
         }
 
+        private void BuildTable()
+        {
+            tableLayoutPanel.SuspendLayout();
+            foreach (var server in servers)
+            {
+                var pingControl = new TwitchServerPingControl();
+                pingControl.ServerName = server.Name;
+
+                serverNameToControl.Add(server.Name, pingControl);
+                tableLayoutPanel.Controls.Add(pingControl);
+            }
+            tableLayoutPanel.ResumeLayout();
+        }
+
+        private async Task LoadServers()
+        {
+            var serverList = await TwitchServerParser.GetAllTwitchServers().ConfigureAwait(false);
+            //servers.AddRange(serverList.Where(x => x.Name.StartsWith("EU")));
+            servers.AddRange(serverList);
+            servers.Sort((x, y) => string.Compare(x.Name, y.Name));
+        }
+
         private async void Ping()
         {
             var pinger = new TwitchServersPinger();
@@ -41,6 +63,7 @@ namespace Twitch
             {
                 serverNameToControl[server.Name].Pinging = true;
                 serverNameToControl[server.Name].ServerPing = await Task.Run(() => { return pinger.Ping(server).Milliseconds; });
+                //serverNameToControl[server.Name].ServerPing = (await pinger.PingAsyncTask(server)).Milliseconds; // same?
                 serverNameToControl[server.Name].Pinging = false;
             }
         }
@@ -55,7 +78,6 @@ namespace Twitch
                 var pingTask = Task.Run<TwitchPingResult>(() => pinger.PingAsyncTaskArgs(server));
                 pingTasks.Add(pingTask);
             }
-
             while (pingTasks.Count > 0)
             {
                 var firstFinishedTask = await Task.WhenAny(pingTasks);
@@ -77,48 +99,11 @@ namespace Twitch
                 control.Pinging = false;
             };
             foreach (var server in servers)
-            {                
+            {
                 serverNameToControl[server.Name].Pinging = true;
-                //MessageBox.Show(System.Threading.Thread.CurrentThread.GetHashCode().ToString() + " Started"); 
                 var task = new Task(() => pinger.PingAsyncVoid(server));
                 task.Start(TaskScheduler.FromCurrentSynchronizationContext());
             }
-        }
-
-        private void BuildTable()
-        {
-            tableLayoutPanel.SuspendLayout();
-
-            //tableLayoutPanel.ColumnStyles[0].SizeType = SizeType.AutoSize;
-            foreach (var server in servers)
-            {
-                var control = new TwitchServerPingControl();
-                control.ServerName = server.Name;
-                control.ServerPing = 9999;
-                //tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, control.Height));
-                this.ResizeBegin += (sender, args) => { };
-                this.SizeChanged += (sender, args) => { };
-                tableLayoutPanel.Controls.Add(control);
-                serverNameToControl.Add(server.Name, control);
-
-                // Trying to solve problem with strange form width behaviour
-                var t1 = this.Width;
-                var t2 = tableLayoutPanel.Width;
-                var t3 = tableLayoutPanel.ColumnStyles[0].Width;
-                var t4 = control.Width;
-                var t5 = tableLayoutPanel.RowStyles[0].Height;
-            }
-            //tableLayoutPanel.ColumnStyles[0].SizeType = SizeType.Absolute;
-            //tableLayoutPanel.ColumnStyles[0].Width = 10;
-            tableLayoutPanel.ResumeLayout();
-        }
-
-        private async Task LoadServers()
-        {
-            var serverList = await TwitchServerParser.GetAllTwitchServers().ConfigureAwait(false);
-            //servers.AddRange(serverList.Where(x => x.Name.StartsWith("EU")));
-            servers.AddRange(serverList);
-            servers.Sort((x, y) => string.Compare(x.Name, y.Name));            
         }
     }
 }
